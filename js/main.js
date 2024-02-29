@@ -1,4 +1,3 @@
-import { Octokit } from "https://cdn.skypack.dev/octokit";
 
 const nombre = document.getElementById("name")
 const direccion = document.getElementById("direccion")
@@ -16,15 +15,16 @@ const Persona = function(nombre, direccion, comuna){
     this.comuna = comuna
 }
 
+var listaPersonas = []
 cargarApi()
-let p1 = new Persona("Juan", "Los libertadores 194", "Santiago")
-let p2 = new Persona("Jose ", "11 de Septiembre 4726", "Ñuñoa")
-let p3 = new Persona("Raul", "Bernardo Ohiggins 9863", "Providencia")
-let p4 = new Persona("Pedro", "Los trapenses 3456", "Provedencia")
-let p5 = new Persona("Claudio", "Salesanos 97465", "Providencia")
-let p6 = new Persona("Max", "Los libertadores 123", "Santiago")
+//let p1 = new Persona("Juan", "Los libertadores 194", "Santiago")
+//let p2 = new Persona("Jose ", "11 de Septiembre 4726", "Ñuñoa")
+//let p3 = new Persona("Raul", "Bernardo Ohiggins 9863", "Providencia")
+//let p4 = new Persona("Pedro", "Los trapenses 3456", "Provedencia")
+//let p5 = new Persona("Claudio", "Salesanos 97465", "Providencia")
+//let p6 = new Persona("Max", "Los libertadores 123", "Santiago")
+//var listaPersonas = [p1,p2,p3,p4,p5,p6]
 
-var listaPersonas = [p1,p2,p3,p4,p5,p6]
 limpiarLocalStorage()
 actualizarLocalStorage()
 listaPersonas = []
@@ -46,6 +46,7 @@ function filtrarComuna(){
     {
         //alert("Datos incorrectos. ")
         mensaje.innerText="Datos incorrectos"
+        showToastError(mensaje.innerText);
         return 
     }   
 
@@ -60,6 +61,7 @@ function filtrarComuna(){
         //alert("No se encontraron personas en la comuna ingresada: " + filterComuna.value)
         LimpiarTabla()
         mensaje.innerText="No se encontraron personas en la comuna ingresada: " + comunaFilter.value
+        showToastAlert(mensaje.innerText);
         return
     }
     Imprimir(resultado)
@@ -71,6 +73,7 @@ function agregarPersona(){
     {
         //alert("Datos incorrectos. ")
         mensaje.innerText="Datos incorrectos"
+        showToastError(mensaje.innerText);
         return 
     }   
 
@@ -80,12 +83,15 @@ function agregarPersona(){
     {
         //alert("el nombre ya existe")
         mensaje.innerText="el nombre ya existe"
+        showToastAlert("el nombre ya existe!");
         return
     }
 
     listaPersonas.push(persona)
     actualizarLocalStorage()
     console.table(listaPersonas)
+    showToastInfo("Registro guardado!");
+
     return true
 }
 
@@ -201,18 +207,18 @@ function createTableFromData(data) {
   }
 
   function cargarApi(){
-    // Carga el archivo db.json y crea el servidor
-    fetch("../db.json")
-      .then(res => res.json())
-      .then(data => {
-        debugger
-        const server = jsonServer.create();
-        const router = jsonServer.router(data);
-        const middlewares = jsonServer.defaults();
-        server.use(middlewares);
-        server.use(router);
-        server.listen();
-      });
+    // Emulando API
+    var jsonUrl = "./api/db.json";
+    debugger
+    fetch('https://github.com/devjosilva/javascript49855_proyectofinal/api/db.json')
+    .then(response => response.json())
+    .then(data => {
+        console.log('Datos:', data);
+
+        // Puedes manipular los datos como desees
+        // Por ejemplo, mostrarlos en la consola
+    })
+    .catch(error => console.error('Error:', error));
   }
   
   function poblarObjeto(){
@@ -239,3 +245,34 @@ fetch(apiUrl)
   });
 
   }
+
+  function showToastInfo(mensaje) {
+    showToast(mensaje,"blue")
+  } 
+
+  function showToastAlert(mensaje) {
+    showToast(mensaje,"yellow")
+  } 
+
+  function showToastError(mensaje) {
+    showToast(mensaje,"red")
+  } 
+
+ function showToast(mensaje, color) {
+    Toastify({
+        text:mensaje,
+        duration: 1000,  // Duración en milisegundos
+        close: true,
+        gravity: "center",  // Puedes usar "top", "bottom", "left", "right"
+        position: 'center',  // Puedes usar 'left', 'center', or 'right'
+        backgroundColor: color,
+        offset: {
+            x: 0, 
+            y: 10 
+        },
+        style: {
+            color:"black",
+            fontWeight: "bold"  // Hacer el texto en negrita
+        }
+    }).showToast();
+}
