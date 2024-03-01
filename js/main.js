@@ -159,7 +159,16 @@ function createTableFromData(data) {
   
       keys.forEach(key => {
         const td = document.createElement('td');
-        td.textContent = item[key];
+        if (key === 'direccion') {
+          const link = document.createElement('a');
+          link.href = '#'; // Puedes poner la dirección real aquí si tienes una página para mostrar el mapa
+          link.textContent = item[key];
+          link.onclick = () => mostrarMapaPopup(item[key]);
+          td.appendChild(link);
+        } else {
+          td.textContent = item[key];
+        }
+        //td.textContent = item[key];
         row.appendChild(td);
       });
       table.appendChild(row);
@@ -223,4 +232,8 @@ function createTableFromData(data) {
             fontWeight: "bold"  // Hacer el texto en negrita
         }
     }).showToast();
+}
+
+function mostrarMapaPopup(direccion) {
+  alert('Dirección: ' + direccion);
 }
