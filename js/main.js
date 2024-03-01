@@ -16,18 +16,8 @@ const Persona = function(nombre, direccion, comuna){
 }
 
 var listaPersonas = []
-cargarApi()
-//let p1 = new Persona("Juan", "Los libertadores 194", "Santiago")
-//let p2 = new Persona("Jose ", "11 de Septiembre 4726", "Ñuñoa")
-//let p3 = new Persona("Raul", "Bernardo Ohiggins 9863", "Providencia")
-//let p4 = new Persona("Pedro", "Los trapenses 3456", "Provedencia")
-//let p5 = new Persona("Claudio", "Salesanos 97465", "Providencia")
-//let p6 = new Persona("Max", "Los libertadores 123", "Santiago")
-//var listaPersonas = [p1,p2,p3,p4,p5,p6]
-
 limpiarLocalStorage()
-actualizarLocalStorage()
-listaPersonas = []
+cargarApi()
 
 function actualizarLocalStorage(){
     localStorage.setItem('listaPersonas', JSON.stringify(listaPersonas));
@@ -42,7 +32,7 @@ function limpiarLocalStorage(){
 }
 
 function filtrarComuna(){
-    if (comunaFilter.value == "")
+  if (comunaFilter.value == "")
     {
         //alert("Datos incorrectos. ")
         mensaje.innerText="Datos incorrectos"
@@ -112,35 +102,6 @@ function LimpiarTabla(){
     mensaje.innerHTML = '';
 }
 
-/*
-let opcion = 0
-while (opcion != 4)
-{
-    let menu = "1. Ingresar persona\n2. Listar personas\n3. Buscar por comuna\n4. Salir"
-    opcion = parseInt(prompt(menu))
-    
-    if (isNaN(opcion) || opcion == null || opcion < 1 || opcion > 4  )
-    {
-        alert("Opción incorrecta");
-        continue
-    }
-    switch(opcion){
-        case 1:
-            agregarPersona()
-            Imprimir(listaPersonas)
-            break
-        case 2:
-            console.table(listaPersonas)
-            Imprimir(listaPersonas)
-            break
-        case 3:
-            filtrarComuna()
-            break
-        default:
-            break
-    }
-}
-*/
 
 btn.addEventListener("click", ()=>{
     if (agregarPersona())
@@ -208,43 +169,30 @@ function createTableFromData(data) {
 
   function cargarApi(){
     // Emulando API
-    var jsonUrl = "./api/db.json";
-    debugger
-    fetch('https://github.com/devjosilva/javascript49855_proyectofinal/api/db.json')
-    .then(response => response.json())
-    .then(data => {
-        console.log('Datos:', data);
+    fetch('https://raw.githubusercontent.com/devjosilva/javascript49855_proyectofinal/master/api/db.json')
+      .then(response => {
+        // Verificar si la respuesta es exitosa (código de estado 200)
+        if (!response.ok) {
+          throw new Error(`Error de red - Código de estado: ${response.status}`);
+        }
+        // Parsear la respuesta como JSON
+        return response.json();
+      })
+      .then(data => {
+        // Manejar los datos JSON aquí
+        console.log('Datos recibidos:', data);
 
-        // Puedes manipular los datos como desees
-        // Por ejemplo, mostrarlos en la consola
-    })
-    .catch(error => console.error('Error:', error));
+        data.posts.forEach(persona => {
+          listaPersonas.push(new Persona(persona.nombre, persona.direccion, persona.comuna))
+          actualizarLocalStorage()
+        });
+      })
+      .catch(error => {
+        // Manejar errores de red o de la solicitud
+        console.error('Error en la solicitud:', error);
+      });
   }
   
-  function poblarObjeto(){
-// URL de la API que devuelve un JSON
-const apiUrl = 'https://ejemplo.com/api/datos';
-
-// Utilizar el método fetch para hacer la solicitud a la API
-fetch(apiUrl)
-  .then(response => {
-    // Verificar si la solicitud fue exitosa (código de estado 200)
-    if (!response.ok) {
-      throw new Error(`Error de red: ${response.status}`);
-    }
-    // Parsear la respuesta como JSON y retornarla
-    return response.json();
-  })
-  .then(data => {
-    // Manipular los datos JSON
-    console.log(data);
-  })
-  .catch(error => {
-    // Manejar errores
-    console.error('Error al obtener los datos:', error);
-  });
-
-  }
 
   function showToastInfo(mensaje) {
     showToast(mensaje,"blue")
